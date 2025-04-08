@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patent Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      color: #333;
+    }
+    header {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    main {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1, h2 {
+      margin: 0.5rem 0;
+    }
+    .patent-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .patent-card h3 {
+      margin-top: 0;
+    }
+    .status {
+      font-weight: bold;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    .status.approved {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+    .status.pending {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    .status.rejected {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #e5e7eb;
+      font-size: 0.9rem;
+    }
+    .meta {
+      font-size: 0.95rem;
+      color: #555;
+    }
+    form {
+      background: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .patent-image {
+      max-width: 100%;
+      border-radius: 10px;
+      margin: 1rem 0;
+    }
+    .delete-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .delete-button:hover {
+      background-color: #dc2626;
+    }
+    .edit-button {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .edit-button:hover {
+      background-color: #059669;
+    }
+    .add-patent-button {
+      display: block;
+      width: fit-content;
+      margin: 1rem auto;
+      background-color: #2563eb;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .add-patent-button:hover {
+      background-color: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Patent Tracker</h1>
+    <p>Track your patent applications and receive status updates in real-time</p>
+  </header>
+  <main>
+    <button class="add-patent-button" onclick="document.getElementById('patentForm').scrollIntoView({ behavior: 'smooth' });">+ Add Patent</button>
+
+    <h2>Submit New Patent Application</h2>
+    <form id="patentForm">
+      <input type="text" id="title" placeholder="Patent Title" required />
+      <input type="text" id="applicationId" placeholder="Application ID" required />
+      <input type="text" id="applicant" placeholder="Applicant Name" required />
+      <input type="date" id="filedDate" required />
+      <select id="status">
+        <option value="approved">Approved</option>
+        <option value="pending">Pending Review</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <input type="url" id="imageUrl" placeholder="Image URL (optional)" />
+      <button type="submit">Submit Patent</button>
+    </form>
+
+    <h2>Patent Applications</h2>
+    <div id="patentList"></div>
+  </main>
+  <footer>
+    &copy; 2025 Patent Tracker. All rights reserved.
+  </footer>
+
+  <script>
+    const form = document.getElementById('patentForm');
+    const list = document.getElementById('patentList');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const applicationId = document.getElementById('applicationId').value;
+      const applicant = document.getElementById('applicant').value;
+      const filedDate = document.getElementById('filedDate').value;
+      const status = document.getElementById('status').value;
+      const imageUrl = document.getElementById('imageUrl').value;
+
+      const statusClass = status.toLowerCase();
+      const displayStatus = status === 'approved' ? 'Approved' : status === 'pending' ? 'Pending Review' : 'Rejected';
+
+      const card = document.createElement('div');
+      card.className = 'patent-card';
+
+      card.innerHTML = `
+        <button class="delete-button" onclick="this.parentElement.remove()">Delete</button>
+        <button class="edit-button" onclick="editPatent(this)">Edit</button>
+        <h3>${title}</h3>
+        <p class="meta">Application ID: ${applicationId}</p>
+        <p class="meta">Applicant: ${applicant}</p>
+        <p class="meta">Filed On: ${filedDate}</p>
+        <p class="status ${statusClass}">${displayStatus}</p>
+        ${imageUrl ? `<img src="${imageUrl}" class="patent-image" alt="Patent Image">` : ''}
+      `;
+
+      list.prepend(card);
+      form.reset();
+    });
+
+    function editPatent(button) {
+      const card = button.parentElement;
+      const title = prompt("Edit Patent Title", card.querySelector('h3').innerText);
+      const applicant = prompt("Edit Applicant Name", card.querySelectorAll('.meta')[1].innerText.replace("Applicant: ", ""));
+      const status = prompt("Edit Status (approved, pending, rejected)", card.querySelector('.status').innerText.toLowerCase());
+
+      if (title) card.querySelector('h3').innerText = title;
+      if (applicant) card.querySelectorAll('.meta')[1].innerText = "Applicant: " + applicant;
+      if (status) {
+        const statusText = status === 'approved' ? 'Approved' : status === 'pending' ? 'Pending Review' : 'Rejected';
+        const statusEl = card.querySelector('.status');
+        statusEl.innerText = statusText;
+        statusEl.className = `status ${status}`;
+      }
+    }
+  </script>
+</body>
+</html>
