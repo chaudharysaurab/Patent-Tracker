@@ -1,0 +1,19 @@
+.guide {
+    background: #ffffff;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .guide h2 {
+    margin-top: 0;
+  }
+  .guide ul {
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+  }
+  .guide li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+  
